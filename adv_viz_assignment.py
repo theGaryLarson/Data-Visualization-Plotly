@@ -38,6 +38,7 @@ fig_funnel = px.funnel(jobs_category_counts,
                        title='Distribution of Jobs Across Categories in 2023')
 
 # Exploration - Create a Stacked Funnel Chart
+
 # Preparing data for the Stacked Funnel Chart
 # Counting the number of jobs within each job category and experience level
 jobs_region_experience = jobs_in_data_df.groupby(['job_category', 'experience_level'])['job_title'].count().reset_index()
