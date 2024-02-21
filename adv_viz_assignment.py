@@ -1,6 +1,5 @@
 import pandas as pd
 import plotly.express as px
-import pyarrow
 import plotly.graph_objects as go
 from plotly.offline import plot
 
@@ -38,10 +37,29 @@ fig_funnel = px.funnel(jobs_category_counts,
                        y='job_category',
                        title='Distribution of Jobs Across Categories in 2023')
 
+# Exploration - Create a Stacked Funnel Chart
+# Preparing data for the Stacked Funnel Chart
+# Counting the number of jobs within each job category and experience level
+jobs_region_experience = jobs_in_data_df.groupby(['job_category', 'experience_level'])['job_title'].count().reset_index()
+jobs_region_experience.columns = ['job_category', 'experience_level', 'count']
+
+# Sorting the job categories in descending order by count to have the largest segment at the top of the funnel
+jobs_region_experience_sorted = jobs_region_experience.sort_values('count', ascending=False)
+
+# Create a Stacked Funnel Chart
+# The data should be sorted by 'count' in descending order to maintain the correct funnel shape
+fig_stacked_funnel = px.funnel(jobs_region_experience_sorted,
+                               x='count',
+                               y='job_category',
+                               color='experience_level',
+                               title='Stacked Funnel Chart: Distribution of Jobs Across Categories by Experience '
+                                     'Level in 2023')
+
+
+# Part 3 - Candlestick Chart: AMZN Stock Price Movement
 # Load AMZN Stock Data for Candlestick Chart
 amzn_df = pd.read_csv('AMZN.csv')
 
-# Candlestick Chart: AMZN Stock Price Movement
 fig_candlestick = go.Figure(data=[go.Candlestick(x=amzn_df['Date'],
                                                  open=amzn_df['Open'],
                                                  high=amzn_df['High'],
@@ -54,4 +72,5 @@ fig_candlestick.update_layout(xaxis_title="Date",
 # Display Charts
 plot(fig_bubble, filename='bubble_chart.html')
 plot(fig_funnel, filename='funnel_chart.html')
+plot(fig_stacked_funnel, filename='stacked_funnel_chart')
 plot(fig_candlestick, filename='candle_chart.html')
